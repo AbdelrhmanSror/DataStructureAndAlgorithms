@@ -11,7 +11,8 @@ fun main() {
  * has two options
  * first:do binary search with traditional for loop
  * second: do binary search with recursion
- *
+ * the array must be sorted
+ *its complexity is log(n)
  */
 class MyBinarySearch(private val arrayToSearchIn: Array<Int>, private val elementToSearch: Int) {
 
