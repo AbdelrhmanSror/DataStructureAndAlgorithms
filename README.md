@@ -1,2 +1,2 @@
 # DataStructureAndAlgorithms 
-simple repos conatiains implementation of most famous algorithms with datastruture
+simple repos conatains implementation of most famous algorithms with data structure
