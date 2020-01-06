@@ -2,7 +2,7 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
-
+//alias name for class
 typealias BFS = GraphBreadthFirstSearch
 fun main() {
     val bfs=BFS()
