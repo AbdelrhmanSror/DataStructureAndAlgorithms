@@ -1,3 +1,6 @@
+import java.util.*
+import kotlin.collections.LinkedHashMap
+
 fun main() {
     val array = arrayOf(1, 11, 2, 10, 3, 9, 4, 8)
     MyQuickSort(array).doQuickSort()
@@ -10,6 +13,7 @@ fun <T> Array<T>.printArray() {
     val n = this.size
     for (i in 0 until n)
         println(this[i].toString())
+
 }
 
 /**
