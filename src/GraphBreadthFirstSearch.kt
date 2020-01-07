@@ -1,24 +1,20 @@
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
+
 //alias name for class
 typealias BFS = GraphBreadthFirstSearch
 fun main() {
-    val bfs=BFS()
-    bfs.addConnection("You","Bob","Claire","Alice")
-    bfs.addConnection("Bob","You","Peggy","Anuj")
-    bfs.addConnection("Anuj","Bob")
-    bfs.addConnection("Peggy","Bob","Alice")
-    bfs.addConnection("Claire","You","Thom","Jonny")
-    bfs.addConnection("Thom","Claire")
-    bfs.addConnection("Jonny","Claire")
-    bfs.searchGraph("Anuj","Thom")
-
-
-
-
-
+    val bfs = BFS()
+    bfs.addConnection("You", "Claire", "Bob", "Alice")
+    bfs.addConnection("Alice", "Peggy")
+    bfs.addConnection("Bob", "Peggy", "Anuj")
+    bfs.addConnection("Anuj", "")
+    bfs.addConnection("Peggy", "")
+    bfs.addConnection("Claire", "Thom", "Jonny")
+    bfs.addConnection("Thom", "")
+    bfs.addConnection("Jonny", "")
+    bfs.searchGraph("Peggy", "You")
 
 
 }
@@ -43,7 +39,7 @@ class GraphBreadthFirstSearch {
 
     fun searchGraph(connection: String, optionalStartFrom: String? = null) {
         if(connections.isEmpty())
-            throw Exception("there is no connections to start searching in")
+            throw Exception("there is no graph to start searching in")
         val startingPoint = optionalStartFrom ?: first
         val listOfConnectionToVisit= LinkedList<String>()
         val visited= HashSet<String>()
@@ -65,14 +61,14 @@ class GraphBreadthFirstSearch {
                                 listOfConnectionToVisit.add(it)
                             }
                         } else {
-                            println("target found $it from $key ")
+                            println("path found $it from $key ")
                             return
                         }
 
                     }
 
             }
-            println("connection  not found ")
+            println("path  not found ")
 
 
 
