@@ -2,60 +2,88 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
+
 fun main() {
     val graphDijkstra = GraphDijkstra()
+    /* graphDijkstra.addNeighbour(
+         "U"
+         , "A" to 4
+         , "D" to 3, "C" to 6
+     )
+     graphDijkstra.addNeighbour(
+         "A"
+         , "U" to 4, "I" to 7
+     )
+     graphDijkstra.addNeighbour(
+         "D"
+         , "U" to 3
+         , "C" to 4
+     )
+     graphDijkstra.addNeighbour(
+         "C"
+         , "U" to 6
+         , "D" to 4, "I" to 4
+     )
+     graphDijkstra.addNeighbour(
+         "I"
+         , "A" to 7
+         , "Y" to 4, "C" to 4
+     )
+     graphDijkstra.addNeighbour(
+         "Y"
+         , "I" to 4
+         , "T" to 5
+     )
+     graphDijkstra.addNeighbour(
+         "T"
+         , "C" to 5
+         , "Y" to 5
+     )
+    */
     graphDijkstra.addNeighbour(
-        "0"
-        , "1" to 4
-        , "7" to 8
+        "S"
+        , "A" to 6
+        , "B" to 2
     )
     graphDijkstra.addNeighbour(
-        "1"
-        , "0" to 4, "7" to 11, "2" to 8
+        "A"
+        , "F" to 1
     )
     graphDijkstra.addNeighbour(
-        "7"
-        , "1" to 11
-        , "0" to 8, "8" to 7, "6" to 1
+        "B"
+        , "F" to 5
+        , "A" to 3
     )
     graphDijkstra.addNeighbour(
-        "2"
-        , "8" to 2
-        , "5" to 4, "3" to 7
+        "F"
     )
-    graphDijkstra.addNeighbour(
-        "8"
-        , "2" to 2
-        , "7" to 7, "6" to 6
-    )
-    graphDijkstra.addNeighbour(
-        "6"
-        , "8" to 6
-        , "7" to 1, "5" to 2
-    )
-    graphDijkstra.addNeighbour(
-        "3"
-        , "2" to 7
-        , "5" to 14, "4" to 9
-    )
-    graphDijkstra.addNeighbour(
-        "4"
-        , "3" to 9
-        , "5" to 10
-    )
-    graphDijkstra.addNeighbour(
-        "5"
-        , "6" to 2
-        , "2" to 4, "3" to 14, "4" to 10
-    )
-
-
-    graphDijkstra.addNeighbour("4")
-    graphDijkstra.calculateFastestPath("0", "8")
+    graphDijkstra.calculateFastestPath("S", "F")
 
 
 }
 
+/**
+ * just for fun of using extension function and dataclass ,i could use pair and rest my self i know
+ */
+class Node(var node: String, var cost: Int)
+
+object NodeComparator : Comparator<Node> {
+    override fun compare(o1: Node, o2: Node): Int {
+        return when {
+            o1.cost < o2.cost -> -1
+            o1.cost > o2.cost -> 1
+            else -> 0
+        }
+    }
+
+}
+
+fun List<Pair<String, Int>>.toNode(): List<Node> {
+    return this.map {
+        Node(it.first, it.second)
+    }
+
+}
 
 /**
  * works only with  non negative weights
@@ -63,13 +91,13 @@ fun main() {
  */
 class GraphDijkstra {
     //graph that stores all the nodes with its neighbours and cost
-    private val graph = HashMap<String, LinkedList<Pair<String, Int>>>()
+    private val graph = HashMap<String, LinkedList<Node>>()
     //cost table to represent the cost of each node from start point
     private val costMap = HashMap<String, Int>()
     //parent table to represent the parent of each node
     //represent child to parent
     private val parentMap = HashMap<String, String>()
-    private val nodesToVisit = LinkedList<String>()
+    private val nodesToVisit = PriorityQueue<Node>(NodeComparator)
     private val visitedNodes = HashSet<String>()
 
 
@@ -77,7 +105,7 @@ class GraphDijkstra {
         if (!graph.containsKey(parent)) {
             graph[parent] = LinkedList()
         }
-        graph[parent]?.addAll(pair)
+        graph[parent]?.addAll(pair.toList().toNode())
     }
 
     fun calculateFastestPath(from: String, to: String) {
@@ -87,38 +115,40 @@ class GraphDijkstra {
             throw Exception("invalid node ")
         costMap[from] = 0
         parentMap[from] = "" //start point has no parent
-        nodesToVisit.add(from)
+        nodesToVisit.add(Node(from, 0))
         while (true) {
             val minNode = nodesToVisit.poll()
             if (minNode == null) {
                 printFastestPathWithCost(from, to)
                 break
             }
-            val min: Int = costMap[minNode]!!
+            val min: Int = costMap[minNode.node]!!
             //update the node neighbours
-            graph[minNode]?.forEach {
+            graph[minNode.node]?.forEach {
                 //update the value in cost table if only the new cost is less than the old cost
                 //i have assumed that any node does not exist in the cost table has an infinite value
                 //so any value that comes after will for sure be the least one
                 //so i create new table with that node with its new value
                 //otherwise update the value in that table
-                if (costMap[it.first] == null || (it.second + min) < costMap[it.first]!!) {
-                    costMap[it.first] = it.second + min
-                    parentMap[it.first] = minNode
-                    if (!visitedNodes.contains(it.first))
-                        nodesToVisit.add(it.first)
+                if (costMap[it.node] == null || (it.cost + min) < costMap[it.node]!!) {
+                    val cost = it.cost + min
+                    costMap[it.node] = cost
+                    parentMap[it.node] = minNode.node
+                    if (!visitedNodes.contains(it.node)) {
+                        visitedNodes.add(it.node)
+                        nodesToVisit.add(Node(it.node, cost))
+                    }
                 }
 
             }
-            visitedNodes.add(minNode)
         }
 
 
     }
 
     private fun printFastestPathWithCost(from: String, to: String) {
-        println("${costMap}")
-        println("${parentMap}")
+        println("$costMap")
+        println("$parentMap")
         println("fastest path from $from to $to is")
         printPath(from, to)
 
