@@ -48,7 +48,10 @@ fun main() {
         , "6" to 2
         , "2" to 4, "3" to 14, "4" to 10
     )
-    graphDijkstra.calculateFastestPath("0", "4")
+
+
+    graphDijkstra.addNeighbour("4")
+    graphDijkstra.calculateFastestPath("0", "8")
 
 
 }
@@ -66,6 +69,9 @@ class GraphDijkstra {
     //parent table to represent the parent of each node
     //represent child to parent
     private val parentMap = HashMap<String, String>()
+    private val nodesToVisit = LinkedList<String>()
+    private val visitedNodes = HashSet<String>()
+
 
     fun addNeighbour(parent: String, vararg pair: Pair<String, Int>) {
         if (!graph.containsKey(parent)) {
@@ -79,19 +85,16 @@ class GraphDijkstra {
             throw Exception("there is no graph to start searching in")
         if (!graph.containsKey(to) || !graph.containsKey(from))
             throw Exception("invalid node ")
-        val visitedNodes = HashSet<String>()
         costMap[from] = 0
         parentMap[from] = "" //start point has no parent
+        nodesToVisit.add(from)
         while (true) {
-            var min = Int.MAX_VALUE
-            var minNode: String? = null
-            //find the cheapest node
-            costMap.forEach {
-                if (it.value < min && !visitedNodes.contains(it.key)) {
-                    min = it.value
-                    minNode = it.key
-                }
+            val minNode = nodesToVisit.poll()
+            if (minNode == null) {
+                printFastestPathWithCost(from, to)
+                break
             }
+            val min: Int = costMap[minNode]!!
             //update the node neighbours
             graph[minNode]?.forEach {
                 //update the value in cost table if only the new cost is less than the old cost
@@ -101,15 +104,13 @@ class GraphDijkstra {
                 //otherwise update the value in that table
                 if (costMap[it.first] == null || (it.second + min) < costMap[it.first]!!) {
                     costMap[it.first] = it.second + min
-                    parentMap[it.first] = minNode!!
+                    parentMap[it.first] = minNode
+                    if (!visitedNodes.contains(it.first))
+                        nodesToVisit.add(it.first)
                 }
 
             }
-            if (minNode == null) {
-                printFastestPathWithCost(from, to)
-                break
-            }
-            visitedNodes.add(minNode!!)
+            visitedNodes.add(minNode)
         }
 
 
@@ -135,7 +136,6 @@ class GraphDijkstra {
             print("$to <-- ")
 
         printPath(from, parentMap.getValue(to))
-
     }
 
 
