@@ -25,7 +25,9 @@ data class Item(val weight: Int, val cost: Int)
 class Knapsack(private val sizeOfKnapsack: Int) {
     //map represent the knapsack sub problem size with item
     /**
-     * BAD: use 2d array instead
+     * for me i think using hash map in this case is more suitable than using 2d array
+     * because in evey step i just need the current one and previous one
+     * but with 2d array i always keep unuseful info in memory even that i do not need it any more
      */
     private val itemMap = LinkedHashMap<Int, Item>()
     private var prvItemMap = LinkedHashMap<Int, Item>()
