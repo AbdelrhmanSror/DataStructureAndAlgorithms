@@ -122,6 +122,7 @@ class GraphDijkstra {
                 printFastestPathWithCost(from, to)
                 break
             }
+            println("${minNode.node}")
             val min: Int = costMap[minNode.node]!!
             //update the node neighbours
             graph[minNode.node]?.forEach {
