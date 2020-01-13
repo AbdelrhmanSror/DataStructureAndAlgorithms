@@ -1,4 +1,4 @@
-import java.util.ArrayList
+import java.util.*
 
 fun main() {
     val listOfArtist: ArrayList<Pair<String, Int>> = arrayListOf(
@@ -22,7 +22,10 @@ fun main() {
 
 /**
  * will do selection sort on list of artist based on number of time that their song has been played
- * it has a complexity of O(n^2) which is bad
+ * it has a complexity of O(n^2)
+ * In general, insertion sort will write to the array O(n2) times, whereas selection sort will write only O(n) times.
+ * For this reason selection sort may be preferable in cases where writing to memory is significantly more expensive than reading,
+ * such as with EEPROM or flash memory.
  */
 data class MySelectionSort(private val list: ArrayList<Int>) {
     fun doSort(): List<Int> {

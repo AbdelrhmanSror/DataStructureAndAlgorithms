@@ -65,7 +65,7 @@ fun main() {
 /**
  * just for fun of using extension function and dataclass ,i could use pair and rest my self i know
  */
-class Node(var node: String, var cost: Int)
+data class Node(var node: String, var cost: Int)
 
 object NodeComparator : Comparator<Node> {
     override fun compare(o1: Node, o2: Node): Int {
