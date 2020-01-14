@@ -1,9 +1,22 @@
+/*
+ * Copyright 2019 Abdelrhman Sror. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 //alias name for class
 typealias BFS = GraphBreadthFirstSearch
+
 fun main() {
     val bfs = BFS()
     bfs.addConnection("You", "Claire", "Bob", "Alice")
@@ -19,6 +32,14 @@ fun main() {
 
 }
 
+/**
+ * If you search your entire network for a person,
+ * that means you’ll follow each edge
+ * So the running time is at least O(number of edges). You also keep a queue of every person to search.
+ * Adding one person to the queue takes constant time: O(1). Doing this for every person will take O(number of people) total.
+ * Breadth-first search takes O(number of people + number of edges), and it’s more commonly written as O(V+E) (V for number of vertices,
+ * E for number of edges).
+ */
 class GraphBreadthFirstSearch {
     //first name in the hash map to use it to start search from later
     private lateinit var first: String
@@ -47,33 +68,30 @@ class GraphBreadthFirstSearch {
             throw Exception("starting point does not exist in this graph,write a valid starting point")
         if(connection==startingPoint){
             print(" traversal points is $connection ")
-        }
-        else{
+        } else{
             listOfConnectionToVisit.add(startingPoint)
             visited.add(startingPoint)
             while (!listOfConnectionToVisit.isEmpty()) {
                 val key=listOfConnectionToVisit.poll()
-                    connections[key]?.forEach {
-                        if (it != connection) {
-                            if(!visited.contains(it)) {
-                                println("traverse $it from $key  ")
-                                visited.add(it)
-                                listOfConnectionToVisit.add(it)
-                            }
-                        } else {
-                            println("path found $it from $key ")
-                            return
+                connections[key]?.forEach {
+                    if (it != connection) {
+                        if(!visited.contains(it)) {
+                            println("traverse $it from $key  ")
+                            visited.add(it)
+                            listOfConnectionToVisit.add(it)
                         }
-
+                    } else {
+                        println("path found $it from $key ")
+                        return
                     }
+
+                }
 
             }
             println("path  not found ")
 
 
-
         }
-
 
 
     }
