@@ -17,12 +17,13 @@ import kotlin.collections.LinkedHashMap
 
 
 fun main() {
-    val subset = Subset(6)
-    subset.addItem(3)
-    subset.addItem(5)
-    subset.addItem(4)
-    subset.addItem(2)
+    val subset: Subset = UnSortedSubset(6)
+    subset.addItem(6)
     subset.addItem(1)
+    subset.addItem(2)
+    subset.addItem(4)
+    subset.addItem(5)
+    subset.addItem(3)
 
     print("${subset.calculateAllSetCanAddUp()}")
 }
@@ -36,16 +37,21 @@ fun main() {
  *  NOTE:WORKS ONLY WITH SORTED NUMBER
  */
 
-class Subset(private val n: Int) {
+abstract class Subset(private val n: Int) {
+    protected open val listOfNumbers = LinkedList<Int>()
+    protected open var leasNumber = Int.MAX_VALUE
     /**
      * for me i think using hash map in this case is more suitable than using 2d array
      * because in evey step i just need the current one and previous one
      * but with 2d array i always keep unuseful info in memory even that i do not need it any more
      */
-    private val currentNumberRow = LinkedHashMap<Int, Int>()
-    private val prvNumberRow = LinkedHashMap<Int, Int>()
-    private val listOfNumbers = LinkedList<Int>()
-    private var leasNumber = Int.MAX_VALUE
+    protected open val currentNumberRow = LinkedHashMap<Int, Int?>()
+    protected open val prvNumberRow = LinkedHashMap<Int, Int?>()
+    /**
+     * @return number of different subset that can add up to [n]
+     */
+    abstract fun calculateAllSetCanAddUp(): Int
+
     fun addItem(number: Int) {
         /**
         only add valid item where its weight is less than or equal the[n]
@@ -58,8 +64,11 @@ class Subset(private val n: Int) {
 
         }
     }
+}
 
-    fun calculateAllSetCanAddUp(): Int {
+
+class SortedSubset(private val n: Int) : Subset(n) {
+    override fun calculateAllSetCanAddUp(): Int {
         var numberOfSubset = 0
         //iterate over each list of number to update the number table
         listOfNumbers.forEach { currentNumber ->
@@ -87,14 +96,12 @@ class Subset(private val n: Int) {
                     }
 
                 }
-                print("${currentNumberRow[number]}")
                 /**
                  *if the current pocket of n contains number =the pocket value that means we have a subset that can  add up to [n]
                  */
                 if (number == n && currentNumberRow[number] == n)
                     numberOfSubset++
             }
-            print("\n")
             //set current row as prev row to use it with the next row
             prvNumberRow.putAll(currentNumberRow)
 
@@ -104,4 +111,48 @@ class Subset(private val n: Int) {
         return numberOfSubset
     }
 
+}
+
+/**
+ * NOTE:WORKS FOR BOTH ORDER AND UNORDERED NUMBER
+ */
+class UnSortedSubset(private val n: Int) : Subset(n) {
+
+
+    override fun calculateAllSetCanAddUp(): Int {
+        //iterate over each list of number to update the number table
+        listOfNumbers.forEach { currentNumber ->
+            for (number in leasNumber..n) {
+                /**
+                 * if the pocket does not exist yet table i create it
+                 * here unlike knapsack i do not maximize or minimize the value of each pocket,
+                 * all i care about if there are numbers that can be summed to fit this pocket
+                 * if it is is set the pocket with 1 which is the number of subset until now
+                 * otherwise i set this pocket with 0 which mean that we can not come up with numbers that can be summed to fit this pocket
+                 */
+                if (!currentNumberRow.containsKey(number)) {
+                    if (currentNumber == number) currentNumberRow[number] = 1
+                    else currentNumberRow[number] = 0
+
+                } else {
+                    val remainingNumberSpace = number - currentNumber
+                    var currentPocketValue: Int = prvNumberRow[number]!!
+                    // if equal null that means there is subset for that pocket
+                    // or if the previous pocket of remaining space has value >0 then we can form subset otherwise we can't so keep previous value
+                    if (prvNumberRow[remainingNumberSpace] == null || prvNumberRow[remainingNumberSpace]!! > 0) {
+                        currentPocketValue = prvNumberRow[number]!! + 1
+
+                    }
+                    //update the table with current pocket value
+                    currentNumberRow[number] = currentPocketValue
+                }
+            }
+            //set current row as prev row to use it with the next row
+            prvNumberRow.putAll(currentNumberRow)
+
+
+        }
+
+        return prvNumberRow[n] ?: 0
+    }
 }
