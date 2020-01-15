@@ -34,7 +34,6 @@ fun main() {
  *  There’s no way for it to figure out that you should take half an item.
  *  u could use greedy algorithm instead
  *  find all subset that can add up to [n]
- *  NOTE:WORKS ONLY WITH SORTED NUMBER
  */
 
 abstract class Subset(private val n: Int) {
@@ -66,7 +65,9 @@ abstract class Subset(private val n: Int) {
     }
 }
 
-
+/**
+ *NOTE:WORKS ONLY WITH SORTED NUMBER ,NO REPETITION
+ */
 class SortedSubset(private val n: Int) : Subset(n) {
     override fun calculateAllSetCanAddUp(): Int {
         var numberOfSubset = 0
@@ -114,7 +115,7 @@ class SortedSubset(private val n: Int) : Subset(n) {
 }
 
 /**
- * NOTE:WORKS FOR BOTH ORDER AND UNORDERED NUMBER
+ * NOTE:WORKS FOR BOTH ORDER AND UNORDERED NUMBER ,NO REPETITION
  */
 class UnSortedSubset(private val n: Int) : Subset(n) {
 
