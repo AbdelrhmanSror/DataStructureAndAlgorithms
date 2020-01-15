@@ -17,9 +17,9 @@ import kotlin.collections.LinkedHashMap
 
 fun main() {
     val knapsack = Knapsack(5)
-    knapsack.addItem(Item(1, 60))
+    knapsack.addItem(Item(3, 60))
     knapsack.addItem(Item(2, 100))
-    knapsack.addItem(Item(3, 120))
+    knapsack.addItem(Item(1, 120))
     knapsack.calculateBestItemCanFit()
 
 
@@ -64,7 +64,10 @@ class Knapsack(private val sizeOfKnapsack: Int) {
             for (weight in leastWeight..sizeOfKnapsack) {
 
                 if (!itemMap.containsKey(weight)) {
-                    itemMap[weight] = Item(currentItem.weight, currentItem.cost)
+                    //only add the current item if its weight fit in that pocket
+                    if (currentItem.weight <= weight)
+                        itemMap[weight] = Item(currentItem.weight, currentItem.cost)
+                    else itemMap[weight] = Item(0, 0)
                 } else {
                     val remainingWeight = weight - currentItem.weight
                     //get the current item value while iterating over columns of table which has its key as weight it can hold

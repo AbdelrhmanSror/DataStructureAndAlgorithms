@@ -18,12 +18,11 @@ import kotlin.collections.LinkedHashMap
 
 fun main() {
     val subset = Subset(6)
-    subset.addItem(1)
-    subset.addItem(2)
     subset.addItem(3)
-    subset.addItem(4)
     subset.addItem(5)
-    subset.addItem(6)
+    subset.addItem(4)
+    subset.addItem(2)
+    subset.addItem(1)
 
     print("${subset.calculateAllSetCanAddUp()}")
 }
@@ -88,12 +87,14 @@ class Subset(private val n: Int) {
                     }
 
                 }
+                print("${currentNumberRow[number]}")
                 /**
-                 *if the current pocket of n contains number =the pocket value that means we have a subset that can be add up to [n]
+                 *if the current pocket of n contains number =the pocket value that means we have a subset that can  add up to [n]
                  */
                 if (number == n && currentNumberRow[number] == n)
                     numberOfSubset++
             }
+            print("\n")
             //set current row as prev row to use it with the next row
             prvNumberRow.putAll(currentNumberRow)
 
