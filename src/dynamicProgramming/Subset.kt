@@ -34,6 +34,7 @@ fun main() {
  *  There’s no way for it to figure out that you should take half an item.
  *  u could use greedy algorithm instead
  *  find all subset that can add up to [n]
+ *  NOTE:WORKS ONLY WITH SORTED NUMBER
  */
 
 class Subset(private val n: Int) {
@@ -76,9 +77,8 @@ class Subset(private val n: Int) {
 
                 } else {
                     val remainingNumberSpace = number - currentNumber
-                    //get the current item value while iterating over columns of table which has its key as weight it can hold
                     val currentPocketValue = currentNumber + (prvNumberRow[remainingNumberSpace] ?: 0)
-                    //comparing the current value with old value which was in the that pocket
+                    //if there is subset of value that can be added up to Number then we update the current pocket
                     if (currentPocketValue == number) {
                         //updating the value in the pocket
                         currentNumberRow[number] = currentPocketValue
