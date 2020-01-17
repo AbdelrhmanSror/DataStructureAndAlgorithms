@@ -10,7 +10,7 @@
  *
  */
 
-package kruskalsMst
+package minimumSpanningTree
 
 import java.util.*
 import kotlin.collections.HashMap

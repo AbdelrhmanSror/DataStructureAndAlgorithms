@@ -10,6 +10,20 @@
  *
  */
 
+package shortestPath
+
+/*
+ * Copyright 2019 Abdelrhman Sror. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -74,11 +88,6 @@ fun main() {
 
 }
 
-/**
- * just for fun of using extension function and dataclass ,i could use pair and rest my self i know
- */
-data class Node(var node: String, var cost: Int)
-
 object NodeComparator : Comparator<Node> {
     override fun compare(o1: Node, o2: Node): Int {
         return when {
@@ -134,15 +143,17 @@ class GraphDijkstra {
                 printFastestPathWithCost(from, to)
                 break
             }
-            println("${minNode.node}")
+            println(minNode.node)
             val min: Int = costMap[minNode.node]!!
             //update the node neighbours
             graph[minNode.node]?.forEach {
-                //update the value in cost table if only the new cost is less than the old cost
-                //i have assumed that any node does not exist in the cost table has an infinite value
-                //so any value that comes after will for sure be the least one
-                //so i create new table with that node with its new value
-                //otherwise update the value in that table
+                /**
+                 * update the value in cost table if only the new cost is less than the old cost
+                 * i have assumed that any node does not exist in the cost table has an infinite value
+                 * so any value that comes after will for sure be the least one
+                 * so i create new table with that node with its new value
+                 * otherwise update the value in that table
+                 */
                 if (costMap[it.node] == null || (it.cost + min) < costMap[it.node]!!) {
                     val cost = it.cost + min
                     costMap[it.node] = cost

@@ -17,13 +17,11 @@ import kotlin.collections.LinkedHashMap
 
 
 fun main() {
-    val subset: Subset = UnSortedSubset(6)
-    subset.addItem(6)
+    val subset: Subset = UnSortedSubset(4)
     subset.addItem(1)
     subset.addItem(2)
-    subset.addItem(4)
-    subset.addItem(5)
     subset.addItem(3)
+
 
     print("${subset.calculateAllSetCanAddUp()}")
 }
@@ -75,7 +73,7 @@ class SortedSubset(private val n: Int) : Subset(n) {
         listOfNumbers.forEach { currentNumber ->
             for (number in leasNumber..n) {
                 /**
-                 * if the pocket does not exist yet table i create it
+                 * if the pocket does not exist yet in table i create it
                  * here unlike knapsack i do not maximize or minimize the value of each pocket,
                  * all i care about if there are numbers that can be summed to fit this pocket
                  * otherwise i set this pocket with 0 which mean that we can not come up with numbers that can be summed to fit this pocket
@@ -141,7 +139,7 @@ class UnSortedSubset(private val n: Int) : Subset(n) {
                     // if equal null that means there is subset for that pocket
                     // or if the previous pocket of remaining space has value >0 then we can form subset otherwise we can't so keep previous value
                     if (prvNumberRow[remainingNumberSpace] == null || prvNumberRow[remainingNumberSpace]!! > 0) {
-                        currentPocketValue = prvNumberRow[number]!! + 1
+                        currentPocketValue += 1
 
                     }
                     //update the table with current pocket value
@@ -154,6 +152,6 @@ class UnSortedSubset(private val n: Int) : Subset(n) {
 
         }
 
-        return prvNumberRow[n] ?: 0
+        return currentNumberRow[n] ?: 0
     }
 }
