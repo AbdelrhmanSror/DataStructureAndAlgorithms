@@ -16,7 +16,7 @@ package dynamicProgramming
 
 fun main() {
     print(
-        calNumberOfPermutationUsing(4, arrayOf(1, 3, 5))
+        calNumberOfUniqueWays(4, arrayOf(1, 3, 5))
     )
 }
 
@@ -37,7 +37,7 @@ fun main() {
  * Generalize your function to take in X.
  */
 
-fun calNumberOfPermutationUsing(numberOfStairs: Int, steps: Array<Int>): Int {
+fun calNumberOfUniqueWays(numberOfStairs: Int, steps: Array<Int>): Int {
 
     /**
      * for me i think using hash map in this case is more suitable than using 2d array
