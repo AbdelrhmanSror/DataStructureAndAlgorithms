@@ -10,6 +10,8 @@
  *
  */
 
+
+
 package trees
 
 fun main() {
@@ -22,7 +24,6 @@ fun main() {
     binarySearchTree.insert(7)
     binarySearchTree.insert(4)
 
-
     binarySearchTree.printPostOrder()
 
 
@@ -32,7 +33,25 @@ data class Node(var value: Int, var left: Node? = null, var right: Node? = null,
 
 abstract class Tree {
     protected var root: Node? = null
-    abstract fun insert(value: Int)
+    fun insert(value: Int) {
+        root = insertRecursively(root, value)
+
+    }
+
+    fun delete(value: Int) {
+        delete(root, value)
+    }
+
+    fun search(value: Int) {
+        search(value) {
+            print("node founded ${it.parent.value}  ${it.node.value}")
+        }
+    }
+
+    protected abstract fun delete(root: Node?, value: Int): Node?
+
+    protected abstract fun insertRecursively(node: Node?, value: Int): Node?
+
     fun printPreOrder(node: Node? = root) {
         if (node == null)
             return
@@ -60,14 +79,88 @@ abstract class Tree {
 
     }
 
+    private fun search(value: Int, parent: Node? = root, target: Node? = root, node: (((Child) -> Unit))) {
+        when {
+            target == null -> {
+                print("node does not exist in tree")
+                return
+            }
+            value > target.value -> {
+                search(value, target, target.right, node)
+            }
+            value < target.value -> {
+                search(value, target, target.left, node)
+            }
+            else -> {
+                node(Child(parent!!, target))
+            }
+
+        }
+    }
+
+
+    protected fun findLargestNode(target: Node? = root): Node? {
+        if (target != null) {
+            return when (target.right) {
+                null -> target
+                else -> findLargestNode(target.right)
+            }
+        } else {
+            print("no largest value")
+        }
+        return null
+
+    }
+
+
 }
 
 class BinarySearchTree : Tree() {
-    override fun insert(value: Int) {
-        root = insertRecursively(root, value)
+    override fun delete(root: Node?, value: Int): Node? {
+        when {
+            root == null -> {
+                print("node does not exist in tree")
+                return root
+            }
+            value > root.value -> {
+                root.right = delete(root.right, value)
+            }
+            value < root.value -> {
+                root.left = delete(root.left, value)
+            }
+            else -> {
+                //if node is a leaf just delete it
+                if (root.left == null && root.right == null) {
+                    return null
+                }
+                //node to delete has no left child so set right child of deleted node to the the parent of deleted node
+                else if (root.left == null) {
+                    return root.right
+                }
+                //node to delete has no right child so set left child of deleted node to the the parent of deleted node
+                else if (root.right == null) {
+                    return root.left
+                } else {
+                    //find the largest node in the left subtree of the root
+                    val largestNode = findLargestNode(root.left)
+                    largestNode?.let {
+                        //replacing the value of root with the largest node value
+                        root.value = it.value
+                        //modify the parent so it points to the left or right  subTree of largest node if exist
+                        root.left = delete(root.left, it.value)
+
+                    }
+
+                }
+            }
+
+        }
+
+        return root
     }
 
-    private fun insertRecursively(node: Node?, value: Int): Node? {
+
+    override fun insertRecursively(node: Node?, value: Int): Node? {
         when {
             node == null -> return Node(value)
             value > node.value //insert right
@@ -83,6 +176,5 @@ class BinarySearchTree : Tree() {
         }
         return node
     }
-
 
 }

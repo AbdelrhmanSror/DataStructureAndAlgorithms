@@ -13,7 +13,7 @@
 fun main() {
 
     //println("${findGreatestCommonDivisor(640, 400)}")
-    sumArrayByRecursion(arrayOf(1, 2, 4, 6, 8))
+    // sumArrayByRecursion(arrayOf(1, 2, 4, 6, 8))
 
 }
 
@@ -37,3 +37,5 @@ fun sumArrayByRecursion(array: Array<Int>, total: Int = 0, index: Int = 0) {
     }
     sumArrayByRecursion(array, total + array[index], index + 1)
 }
+
+

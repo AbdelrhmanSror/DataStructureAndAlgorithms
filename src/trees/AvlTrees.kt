@@ -10,142 +10,97 @@
  *
  */
 
+
+
 package trees
 
 import kotlin.math.max
 
 fun main() {
-    /*  AVL Tree would be
-           4
-          /  \
-        2     6
-       /  \   |  \
-      1    3  5   7
-    */
     val avlTrees = AvlTrees()
-    /* avlTrees.insert(1)
-     avlTrees.insert(2)
-     avlTrees.insert(3)
-     avlTrees.insert(4)
-     avlTrees.insert(6)
-     avlTrees.insert(5)
-     avlTrees.insert(7)*/
-    avlTrees.insert(30)
-    avlTrees.insert(26)
+    avlTrees.insert(29)
     avlTrees.insert(60)
     avlTrees.insert(28)
-    avlTrees.insert(55)
-    avlTrees.insert(70)
     avlTrees.insert(25)
     avlTrees.insert(29)
-    avlTrees.insert(27)
-    avlTrees.search(28)
+    avlTrees.insert(70)
+    avlTrees.insert(45)
+    avlTrees.insert(11)
+    avlTrees.insert(15)
+    avlTrees.insert(80)
+    avlTrees.delete(45)
+    avlTrees.printInorder()
 
 }
 
 data class Child(val parent: Node, val node: Node)
 class AvlTrees : Tree() {
 
-    override fun insert(value: Int) {
-        root = insertRecursively(root, value)
-    }
-
-    fun search(value: Int) {
-        search(value) {
-            print("node founded ${it.parent.value}  ${it.node.value}")
-        }
-    }
-
-
-    private fun search(value: Int, parent: Node? = root, target: Node? = root, node: ((Child) -> Unit)) {
+    override fun delete(root: Node?, value: Int): Node? {
         when {
-            target == null -> {
+            root == null -> {
                 print("node does not exist in tree")
-                return
+                return root
             }
-            value > target.value -> {
-                search(value, target, target.right, node)
+            value > root.value -> {
+                root.right = delete(root.right, value)
             }
-            value < target.value -> {
-                search(value, target, target.left, node)
+            value < root.value -> {
+                root.left = delete(root.left, value)
             }
-            //node founded
             else -> {
-                node(Child(parent!!, target))
-            }
-        }
-    }
+                //if node is a leaf just delete it
+                if (root.left == null && root.right == null) {
+                    return null
+                }
+                //node to delete has no left child so set right child of deleted node to the the parent of deleted node
+                else if (root.left == null) {
+                    return root.right
+                }
+                //node to delete has no right child so set left child of deleted node to the the parent of deleted node
+                else if (root.right == null) {
+                    return root.left
+                } else {
+                    //find the largest node in the left subtree of the root
+                    val largestNode = findLargestNode(root.left)
+                    largestNode?.let {
+                        //replacing the value of root with the largest node value
+                        root.value = it.value
+                        //modify the parent so it points to the left or right  subTree of largest node if exist
+                        root.left = delete(root.left, it.value)
 
-
-    fun delete(value: Int) {
-        search(value) { nodeToDelete ->
-            //if node is a leaf just delete it
-            if (nodeToDelete.node.left == null && nodeToDelete.node.right == null) {
-                deleteNode(nodeToDelete.parent, nodeToDelete.node, null)
-            }
-            //node to delete has no left child so set right child of deleted node to the the parent of deleted node
-            else if (nodeToDelete.node.left == null) {
-                deleteNode(nodeToDelete.parent, nodeToDelete.node, nodeToDelete.node.right)
-            }
-            //node to delete has no right child so set left child of deleted node to the the parent of deleted node
-            else if (nodeToDelete.node.right == null) {
-                deleteNode(nodeToDelete.parent, nodeToDelete.node, nodeToDelete.node.left)
-            } else {
-                //find the largest node in the left subtree of the nodeToDelete
-                findLargestNode(nodeToDelete.node, nodeToDelete.node.left) {
-                    //modify the parent so it points to the left or right  subTree of deleted node if exist
-                    deleteNode(it.parent, it.node, it.node.left)
-                    //replacing the value of nodeToDelete with the largest value
-                    nodeToDelete.node.value = it.node.value
+                    }
 
                 }
             }
 
         }
 
+        return deletionBalance(root)
     }
 
-    private fun deleteNode(parent: Node, nodeToDelete: Node, newNode: Node?) {
-        //the node to delete is positioned at left side of the parent
-        if (nodeToDelete.value < parent.value)
-            parent.left = newNode
-        //the node to delete is positioned at right side of the parent
-        else parent.right = newNode
-
-    }
-
-
-    fun findLargestNode(parent: Node? = root, target: Node? = root, node: ((Child) -> Unit)) {
-        if (target != null) {
-            when (target.right) {
-                null -> {
-                    node(Child(parent!!, target))
-                    return
-                }
-                else -> {
-                    findLargestNode(target, target.right, node)
-                }
-            }
-        } else {
-            print("no largest value")
-        }
-    }
-
-    private fun insertRecursively(node: Node?, value: Int): Node? {
-        var balanceFactor: Int = 0
+    override fun insertRecursively(node: Node?, value: Int): Node? {
         when {
             node == null -> return Node(value)
-            value > node.value //insert right
+            //insert right
+            value > node.value
             -> {
                 node.right = insertRecursively(node.right, value)
-
             }
-            value < node.value//insert left
+            //insert left
+            value < node.value
             -> {
                 node.left = insertRecursively(node.left, value)
             }
             else -> return node
         }
+
+        return insertionBalance(node, value)
+
+    }
+
+    private fun insertionBalance(node: Node, value: Int): Node {
+        var balanceFactor = 0
         node.height = getHeight(node) + 1
         balanceFactor = getBalanceFactor(node)
         when {
@@ -173,9 +128,39 @@ class AvlTrees : Tree() {
                 return performRightRotation(node)
             }
         }
-
         return node
+    }
 
+    private fun deletionBalance(node: Node): Node {
+        var balanceFactor = 0
+        node.height = getHeight(node) + 1
+        balanceFactor = getBalanceFactor(node)
+        when {
+            //if the unbalanced tree exist and value is smaller than the value in the left node then perform right rotation
+            //left left case
+            balanceFactor > 1 && getBalanceFactor(node.left!!) >= 0 -> {
+                return performRightRotation(node)
+            }
+            //if the unbalanced tree exist and value is larger than the value in the right node then perform left rotation
+            //right right case
+            balanceFactor < -1 && getBalanceFactor(node.right!!) <= 0 -> {
+                return performLeftRotation(node)
+            }
+            //if the unbalanced tree exist and value is larger than the value in the right of left node then perform left right rotation
+            //left right case
+            balanceFactor > 1 && getBalanceFactor(node.left!!) < 0 -> {
+                node.left = performLeftRotation(node.left!!)
+                return performRightRotation(node)
+
+            }
+            //if the unbalanced tree exist and value is smaller than the value in the left of right node then perform right left rotation
+            //right left case
+            balanceFactor < -1 && getBalanceFactor(node.right!!) > 0 -> {
+                node.right = performLeftRotation(node.right!!)
+                return performRightRotation(node)
+            }
+        }
+        return node
     }
 
     private fun performLeftRotation(parent: Node): Node {
