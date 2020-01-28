@@ -38,56 +38,21 @@ fun main() {
  */
 
 fun calNumberOfUniqueWays(numberOfStairs: Int, steps: Array<Int>): Int {
-
-    /**
-     * for me i think using hash map in this case is more suitable than using 2d array
-     * because in evey step i just need the current one and previous one
-     * but with 2d array i always keep unuseful info in memory even that i do not need it any more
-     */
-    val currentStepRow = LinkedHashMap<Int, Int?>()
-    val previousStepRow = LinkedHashMap<Int, Int?>()
-    //iterate over each list of number to update the number table
-    steps.forEach { currentStep ->
-
-        for (currentStairCaseStep in 1..numberOfStairs) {
-            /**
-             *[currentStep] represent row in table
-             * [currentStairCaseStep] represent column in table
-             * here i am cutting the problem into sub problems
-             * i want to know if i can construct at least 1 permutation or at least one way i can climb the stairs
-             * so here is my rules u can verify it if u want
-             * @see row [65]
-             * if(reminder of  current step of staircase(column) and the current step (row) i can climb staircase with ==0 then there is one way to climb the stairs)
-             * also sum of previous value of permutation u could climb staircase with
-             * also value of remaining step at step of staircase(column) multiplied by 2
-             */
-            if (!currentStepRow.containsKey(currentStairCaseStep)) {
-                if (currentStep % currentStairCaseStep == 0) currentStepRow[currentStairCaseStep] = 1
-                else currentStepRow[currentStairCaseStep] = 0
-
-            } else {
-                val remainingStep = currentStairCaseStep - currentStep
-                var currentStepValue: Int = previousStepRow[currentStairCaseStep]!!
-                // if equal null that means there is way to climb stair with current steps
-                if (previousStepRow[remainingStep] == null) {
-                    currentStepValue += 1
-                }
-                //if the previous value of previous step of remaining space has value >0 then we multiply the value by 2 which mean we have 2 ways to form unique ways
-                else if (previousStepRow[remainingStep]!! > 0) {
-                    currentStepValue += previousStepRow[remainingStep]!! * 2
-                }
-                if (currentStairCaseStep % currentStep == 0) {
-                    currentStepValue += 1
-                }
-                //update the table with current step value
-                currentStepRow[currentStairCaseStep] = currentStepValue
+    val currentStep = HashMap<Int, Int>()
+    //base case
+    currentStep[0] = 1
+    if (numberOfStairs == 0) return 1
+    //iterate over each step and calculate the max number of unique ways i can climb this step with
+    for (currentStairCaseStep in 1..numberOfStairs) {
+        var maxStep = 0
+        steps.forEach { step ->
+            if (currentStairCaseStep - step > -1) {
+                maxStep += currentStep[currentStairCaseStep - step]!!
             }
         }
-        //set current row as prev row to use it with the next row
-        previousStepRow.putAll(currentStepRow)
-
-
+        //this means we are telling that this step has max number of n ways
+        currentStep[currentStairCaseStep] = maxStep
     }
+    return currentStep[numberOfStairs]!!
 
-    return currentStepRow[numberOfStairs] ?: 0
 }
