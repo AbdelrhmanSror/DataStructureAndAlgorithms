@@ -19,16 +19,6 @@ import kotlin.math.max
 fun main() {
     val avlTrees = AvlTrees()
     avlTrees.insert(29)
-    avlTrees.insert(60)
-    avlTrees.insert(28)
-    avlTrees.insert(25)
-    avlTrees.insert(29)
-    avlTrees.insert(70)
-    avlTrees.insert(45)
-    avlTrees.insert(11)
-    avlTrees.insert(15)
-    avlTrees.insert(80)
-    avlTrees.delete(45)
     avlTrees.printInorder()
 
 }

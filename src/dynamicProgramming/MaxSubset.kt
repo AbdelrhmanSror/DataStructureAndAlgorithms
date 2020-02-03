@@ -18,6 +18,7 @@ fun main() {
     print(findMaxSubset(arrayOf(2, 1, 5, 8, 4)))
 }
 
+
 /**
  * kadane's algorithm
  */
