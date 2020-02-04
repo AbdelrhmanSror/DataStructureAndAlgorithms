@@ -154,8 +154,8 @@ class AvlTrees : Tree() {
             //if the unbalanced tree exist and value is smaller than the value in the left of right node then perform right left rotation
             //right left case
             balanceFactor < -1 && getBalanceFactor(node.right!!) > 0 -> {
-                node.right = performLeftRotation(node.right!!)
-                return performRightRotation(node)
+                node.right = performRightRotation(node.right!!)
+                return performLeftRotation(node)
             }
         }
         return node
