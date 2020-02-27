@@ -12,10 +12,19 @@
 
 package sort
 
+import java.util.*
+import kotlin.Comparator
+
 fun main() {
-    val array = arrayOf(1, 11, 2, 10, 3, 9, 4, 8)
-    MyQuickSort(array).doQuickSort()
-    array.printArray()
+
+    val scan = Scanner(System.`in`)
+    val arr = Array<Int>(10000) { 0 }
+    for (i in 0 until 10000) {
+        val arrItem = scan.nextLine().trim().toInt()
+        arr[i] = arrItem
+    }
+    println(MyQuickSort(arr).doQuickSort())
+    arr.printArray()
 
 
 }
@@ -33,33 +42,93 @@ fun <T> Array<T>.printArray() {
  */
 class MyQuickSort(private val array: Array<Int>) {
 
-    fun doQuickSort(low: Int = 0, high: Int = array.size - 1) {
+    fun doQuickSort(low: Int = 0, high: Int = array.size - 1): Int {
+        var comparison = 0
         if (high <= low) {
-            return
+            return 0
         }
         val pivot = doPartitioning(low, high)
-        doQuickSort(low, pivot - 1) //the left side
-        doQuickSort(pivot + 1, high) //the right side
+        comparison += ((low + pivot.first) / 2) + ((pivot.second + high) / 2)
+        doQuickSort(low, pivot.first) //the left side
+        doQuickSort(pivot.second, high) //the right side
+        return comparison
     }
 
-    private fun doPartitioning(low: Int, high: Int): Int {
+    private fun doPartitioning(low: Int, high: Int): Pair<Int, Int> {
+        //assume that our initial pivot is middle index in array
+        val pivot = array.choosePivot(low, high)
+        return when (pivot.second) {
+            low -> {
+                doPartitioningFirst(low, high)
+            }
+            high -> {
+                doPartitioningLast(low, high)
+            }
+            else -> {
+                doPartitioningMiddle(low, high, pivot.second)
+            }
+        }
+    }
+
+    private fun doPartitioningLast(low: Int, high: Int): Pair<Int, Int> {
         //assume that our initial pivot is last index in array
         val pivot = array[high]
         var i = low - 1
-        for (j in low until high) {
+        for (j in low..high) {
             if (array[j] < pivot) {
-                i++
-                array.doSwapping(i, j)
+                array.doSwapping(++i, j)
             }
         }
-        i++
-        array.doSwapping(i, high)
-        return i
+        array.doSwapping(++i, high)
+        return Pair(i - 1, i + 1)
     }
+
+    private fun doPartitioningFirst(low: Int, high: Int): Pair<Int, Int> {
+        //assume that our initial pivot is first index in array
+        val pivot = array[low]
+        var i = high + 1
+        for (j in high downTo low) {
+            if (array[j] > pivot) {
+                array.doSwapping(--i, j)
+            }
+        }
+        array.doSwapping(--i, low)
+        return Pair(i - 1, i + 1)
+    }
+
+    private fun doPartitioningMiddle(low: Int, high: Int, middle: Int): Pair<Int, Int> {
+        //assume that our initial pivot is middle index in array
+        val pivot = array[middle]
+        var i = low
+        var j = high
+        while (i <= j) {
+            while (array[i] < pivot) i++
+            while (array[j] > pivot) j--
+            if (i <= j) {
+                array.doSwapping(i, j)
+                i++; j--
+            }
+        }
+        return Pair(j, i)
+    }
+
 
     private fun Array<Int>.doSwapping(first: Int, last: Int) {
         val temp = this[last]
         this[last] = this[first]
         this[first] = temp
+    }
+
+    private fun Array<Int>.choosePivot(low: Int, high: Int): Pair<Int, Int> {
+        val temp = Array<Pair<Int, Int>?>(3) { null }
+        val middle = (low + high) / 2
+        temp[0] = Pair(this[low], low)
+        temp[1] = Pair(this[high], high)
+        temp[2] = Pair(this[middle], middle)
+        temp.sortWith(Comparator { o1, o2 ->
+            o1!!.first.compareTo(o2!!.second)
+        })
+        return temp[1]!!
+
     }
 }

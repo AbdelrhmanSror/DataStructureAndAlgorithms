@@ -17,7 +17,7 @@ import kotlin.collections.HashMap
 
 fun main() {
     val cycleDetection = CycleDetection<Int>()
-    cycleDetection.isCycleExist(0 to 1, 1 to 2, 2 to 3, 3 to 4, 4 to 5, 5 to 2)
+   print(cycleDetection.isCycleExist(3 to 1, 3 to 4, 3 to 2, 2 to 4, 2 to 3, 4 to 3, 4 to 1, 4 to 2, 1 to 3, 1 to 4))
 }
 
 data class Node<T>(var parent: T, var rank: Int = 0)
@@ -80,7 +80,7 @@ class CycleDetection<T> {
 
     }
 
-    fun createIfNotExist(src: T, des: T) {
+    private fun createIfNotExist(src: T, des: T) {
         if (!nodeMap.containsKey(src))
             nodeMap[src] = Node(src, 0)
         if (!nodeMap.containsKey(des))

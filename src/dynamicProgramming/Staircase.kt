@@ -16,7 +16,7 @@ package dynamicProgramming
 
 fun main() {
     print(
-        calNumberOfUniqueWays(4, arrayOf(1, 3, 5))
+        calNumberOfUniqueWays(5, arrayOf(1, 2, 3))
     )
 }
 

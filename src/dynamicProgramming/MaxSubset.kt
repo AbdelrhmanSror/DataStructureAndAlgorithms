@@ -12,28 +12,60 @@
 
 package dynamicProgramming
 
+import java.util.*
 import kotlin.math.max
 
+
 fun main() {
-    print(findMaxSubset(arrayOf(2, 1, 5, 8, 4)))
+
+    val result = getMaxSum(arrayOf(3, 3, 9), 7)
+
+    println(result)
+
 }
 
 
 /**
  * kadane's algorithm
+ * adjacent
  */
 fun maxSubArraySum(a: Array<Int>): Int {
     val size = a.size
-    var max_so_far = Int.MIN_VALUE
-    var max_ending_here = 0
+    var maxSoFar = Int.MIN_VALUE
+    var maxEndingHere = 0
     for (i in 0 until size) {
-        max_ending_here += a[i]
-        if (max_so_far < max_ending_here) max_so_far = max_ending_here
-        if (max_ending_here < 0) max_ending_here = 0
+        maxEndingHere += a[i]
+        if (maxSoFar < maxEndingHere) maxSoFar = maxEndingHere
+        if (maxEndingHere < 0) maxEndingHere = 0
+        println("maxsofar $maxSoFar   max endinghere$maxEndingHere")
     }
-    return max_so_far
+    return maxSoFar
 }
 
+/**
+ * Maximum subarray sum modulo m
+
+ */
+fun getMaxSum(arr: Array<Long>, m: Long): Long {
+    var maxSum: Long = 0
+    val prefix = TreeSet<Long>()
+    var currentSum: Long = 0
+    for (element in arr) {
+        currentSum = (currentSum + element % m) % m
+        val set = prefix.tailSet(currentSum + 1)
+        val itr: Iterator<Long> = set.iterator()
+        if (itr.hasNext()) {
+            maxSum = max(maxSum, (currentSum - itr.next() + m) % m)
+        }
+        maxSum = max(maxSum, currentSum)
+        prefix.add(currentSum)
+    }
+    return maxSum
+}
+
+/**
+ * non adjacent subarray elemnt
+ */
 fun findMaxSubset(arr: Array<Int>): Int {
     var maxWithPrevElement = arr[0]
     var maxWithOutPrevElement = 0
